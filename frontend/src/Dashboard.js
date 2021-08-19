@@ -17,6 +17,7 @@ function Dashboard() {
   const [members, setMembers] = useState([]);
   const [selectedMember, setSelectedMember] = useState(members[0]);
   const [task, setTask] = useState("");
+  const [selectTodo, setSelectTodo] = useState("");
   const user = JSON.parse(localStorage.getItem("authUser"));
 
   const history = useHistory();
@@ -90,6 +91,26 @@ function Dashboard() {
       });
   };
 
+  const handleEdit = (id, value) => {
+    setInputValue(value);
+    setSelectTodo(id);
+  };
+
+  const updateTask = async (e) => {
+    e.preventDefault();
+    await axios
+      .put(`/api/task/update/${selectTodo}`, {
+        task: inputValue,
+      })
+      .then(() => {
+        setInputValue("");
+        setSelectTodo("");
+      })
+      .catch((err) => {
+        console.log("Complete err >>>", err);
+      });
+  };
+
   const logout = () => {
     localStorage.clear();
     history.push("/signin");
@@ -137,22 +158,24 @@ function Dashboard() {
     fetchMembers();
   }, []);
 
-  useEffect(() => {
-    const pusher = new Pusher("73795cebf5c74388d2e3", {
-      cluster: "ap2",
-    });
+  const pusher = new Pusher("73795cebf5c74388d2e3", {
+    cluster: "ap2",
+  });
 
-    // sync task
-    const channel = pusher.subscribe("tasks");
-    channel.bind("inserted", (data) => {
+  // sync task
+  useEffect(() => {
+    const taskChannel = pusher.subscribe("tasks");
+    taskChannel.bind("inserted", (data) => {
       fetchTask();
     });
-    channel.bind("updated", (data) => {
+    taskChannel.bind("updated", (data) => {
       fetchTask();
       fetchCompletedTask();
     });
+  }, []);
 
-    // sync member
+  // sync member
+  useEffect(() => {
     const memberChannel = pusher.subscribe("users");
     memberChannel.bind("inserted", (data) => {
       fetchMembers();
@@ -186,7 +209,10 @@ function Dashboard() {
                         onChange={(e) => setInputValue(e.target.value)}
                       />
 
-                      <button className="w-7 h-7" onClick={addTask}>
+                      <button
+                        className="w-7 h-7"
+                        onClick={selectTodo !== "" ? updateTask : addTask}
+                      >
                         <PlusIcon className="text-red-500 bg-red-300 p-1 rounded-full" />
                       </button>
                     </>
@@ -205,6 +231,7 @@ function Dashboard() {
                           title={task.task}
                           complete={handleComplete}
                           deleteTask={handleDelete}
+                          editTodo={handleEdit}
                         />
                       );
                     })}

@@ -44,8 +44,8 @@ mongoose
 mongoose.connection.once("open", () => {
   console.log("DB connected");
 
-  const changeStream = mongoose.connection.collection("tasks").watch();
-  changeStream.on("change", (change) => {
+  const tasksStream = mongoose.connection.collection("tasks").watch();
+  tasksStream.on("change", (change) => {
     if (change.operationType === "insert") {
       const postDetails = change.fullDocument;
       pusher

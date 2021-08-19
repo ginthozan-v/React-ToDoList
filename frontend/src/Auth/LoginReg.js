@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Tab } from "@headlessui/react";
 import axios from "../Axios";
-import { Redirect, useHistory } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
