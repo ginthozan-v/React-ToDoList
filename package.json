@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "spa-http-server": "^0.9.0"
+  }
+}

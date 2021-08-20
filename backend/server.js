@@ -14,7 +14,7 @@ import taskApi from "./routes/api/task.js";
 // app config
 // >>>>>>>>
 const app = express();
-const port = process.env.PORT;
+const port = process.env.PORT || 8080;
 
 const pusher = new Pusher({
   appId: "1250407",

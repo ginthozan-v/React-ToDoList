@@ -31,12 +31,14 @@ function Dashboard() {
           assigned: user.id,
           complete: false,
         })
-        .then()
+        .then(() => {
+          setInputValue("");
+          setSelectTodo("");
+        })
         .catch((err) => {
           console.log("add err >>>", err);
         });
     }
-    setInputValue("");
   };
 
   const fetchTask = async () => {
@@ -76,7 +78,10 @@ function Dashboard() {
       .put(`/api/task/update/${value}`, {
         complete: true,
       })
-      .then()
+      .then(() => {
+        setInputValue("");
+        setSelectTodo("");
+      })
       .catch((err) => {
         console.log("Complete err >>>", err);
       });
@@ -85,7 +90,10 @@ function Dashboard() {
   const handleDelete = async (value) => {
     await axios
       .delete(`/api/task/delete/${value}`)
-      .then(() => {})
+      .then(() => {
+        setInputValue("");
+        setSelectTodo("");
+      })
       .catch((err) => {
         console.log("Delete err >>>", err);
       });
