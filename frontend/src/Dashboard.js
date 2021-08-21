@@ -16,7 +16,6 @@ function Dashboard() {
   const [completed, setCompleted] = useState([]);
   const [members, setMembers] = useState([]);
   const [selectedMember, setSelectedMember] = useState(members[0]);
-  const [task, setTask] = useState("");
   const [selectTodo, setSelectTodo] = useState("");
   const user = JSON.parse(localStorage.getItem("authUser"));
 
@@ -28,12 +27,13 @@ function Dashboard() {
       await axios
         .post("/api/task/add", {
           task: inputValue,
-          assigned: user.id,
+          assigned: selectedMember ? selectedMember._id : user.id,
           complete: false,
         })
         .then(() => {
           setInputValue("");
           setSelectTodo("");
+          setSelectedMember("");
         })
         .catch((err) => {
           console.log("add err >>>", err);
@@ -140,26 +140,6 @@ function Dashboard() {
       });
   };
 
-  const assignTaskToMember = async (e) => {
-    e.preventDefault();
-    if (task !== "" && selectedMember !== "") {
-      await axios
-        .post("/api/task/add", {
-          task: task,
-          assigned: selectedMember._id,
-          complete: false,
-        })
-        .then(() => {
-          setTask("");
-          setSelectedMember("");
-          // alert("task assigned");
-        })
-        .catch((err) => {
-          console.log("add err >>>", err);
-        });
-    }
-  };
-
   useEffect(() => {
     fetchTask();
     fetchCompletedTask();
@@ -228,7 +208,7 @@ function Dashboard() {
                 </form>
               </div>
 
-              <div className="my-2 h-72 overflow-y-auto">
+              <div className="my-2 h-72 2xl:h-96  overflow-y-auto">
                 <div className="px-4 py-2 space-y-2">
                   {toDo.length > 0 &&
                     toDo.map((task) => {
@@ -252,7 +232,7 @@ function Dashboard() {
                 <h1>Completed</h1>
               </div>
 
-              <div className="my-2 h-80 overflow-y-auto">
+              <div className="my-2 h-80 2xl:h-96 overflow-y-auto">
                 <div className="px-4  space-y-2">
                   {completed.length > 0 &&
                     completed.map((task) => {
@@ -356,11 +336,11 @@ function Dashboard() {
                         type="text"
                         placeholder="task"
                         className="w-full font-OpenSans text-sm font-normal my-1 py-1 2xl:py-3 px-2 2xl:px-4 rounded-lg focus:outline-none mb-2 "
-                        value={task}
-                        onChange={(e) => setTask(e.target.value)}
+                        value={inputValue}
+                        onChange={(e) => setInputValue(e.target.value)}
                       />
                       <button
-                        onClick={assignTaskToMember}
+                        onClick={addTask}
                         className="bg-red-400 w-full rounded-lg my-2 py-1 2xl:py-3 text-white font-OpenSans font-semibold"
                       >
                         submit
